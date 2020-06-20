@@ -117,7 +117,7 @@ achievement(
 // For each barrel: Checked to ensure it's been spawned at least once since the level transition
 // Check if the hammer is active (this check is somewhat redundant as there is no additional way to destroy barrels to my knowledge)
 // Check if at least one barrel (that has been spawned) has been destroyed via non-natural means 
-//    (barrels naturally despawn at y=145, where the hammer power-up cannot reach) so this is used as prior)
+//    (barrels naturally despawn at y=145, where the hammer power-up cannot reach, so this is used as prior)
 achievement(
     title = "Barrel Breaker", description = "Destroy a barrel with a hammer", points = 1,
     id = 114046, badge = "124573", published = "6/14/2020 11:54:38 PM", modified = "6/20/2020 4:40:52 PM",
