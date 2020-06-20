@@ -109,14 +109,14 @@ achievement(
 achievement(
     title = "Barrel Breaker", description = "Destroy a barrel with a hammer", points = 1,
     id = 114046, badge = "124573", published = "6/14/2020 11:54:38 PM", modified = "6/14/2020 11:54:38 PM",
-    trigger = byte(0x000006) != 0 && byte(0x000010) == 0 &&
-              ((once(byte(0x000003) != 0) && never(byte(0x00000C) != 255) && byte(0x000003) == 0 && 
+    trigger = byte(0x000006) != 0 && byte(0x000010) == 0 && never(byte(0x00000C) != 255) &&
+              ((once(byte(0x000003) != 0) && byte(0x000003) == 0 && 
                 prior(byte(0x000003)) != 145) ||
-               (once(byte(0x000002) != 0) && never(byte(0x00000C) != 255) && byte(0x000002) == 0 && 
+               (once(byte(0x000002) != 0) && byte(0x000002) == 0 && 
                 prior(byte(0x000002)) != 145) ||
-               (once(byte(0x000001) != 0) && never(byte(0x00000C) != 255) && byte(0x000001) == 0 && 
+               (once(byte(0x000001) != 0) && byte(0x000001) == 0 && 
                 prior(byte(0x000001)) != 145) ||
-               (once(byte(0x000000) != 0) && never(byte(0x00000C) != 255) && byte(0x000000) == 0 && 
+               (once(byte(0x000000) != 0) && byte(0x000000) == 0 && 
                 prior(byte(0x000000)) != 145))
 )
 
