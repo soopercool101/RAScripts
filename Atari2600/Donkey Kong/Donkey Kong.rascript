@@ -82,12 +82,24 @@
 //        Bit 0: 1 = Right, 0 = Left
 //        Bits 4-7: Set to 1 if a barrel is moving downwards
 
+function game_started() => byte(0x000011) != 0xFF
+
+function player_xpos() => byte(0x000013)
+function player_ypos() => byte(0x00001B)
+
+function enemy_yposition(index) => byte(0x000000 + index)
+
+function has_hammer() => byte(0x000006) != 0
+
+function level() => byte(0x000010)
 
 // This port only includes 2 levels
 LevelLookup = {
     0: "25m",
     1: "100m",
 }
+
+function game_state() => byte(0x00000C)
 
 // There are four known game states. State 0 is shared between unstarted game and game over.
 StatusLookup = {
@@ -97,18 +109,23 @@ StatusLookup = {
     0xFF: "Climbing at",
 }
 
+function lives() => byte(0x000023)
+function full_lives() => lives() == 2
+
+function bonus() => byte(0x000024)
+
 // Checks: Level = 0 (25m) and game state = 2 (level win)
 achievement(
     title = "The Journey Begins", description = "Complete 25m", points = 5,
     id = 114044, badge = "124570", published = "6/14/2020 11:54:27 PM", modified = "6/15/2020 2:47:19 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0
+    trigger = game_state() == 2 && level() == 0
 )
 
 // Checks: Level = 1 (100m) and game state = 2 (level win)
 achievement(
     title = "...Wait Is That It?", description = "Complete 100m", points = 10,
     id = 114045, badge = "124571", published = "6/14/2020 11:54:33 PM", modified = "6/18/2020 8:30:18 PM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 1
+    trigger = game_state() == 2 && level() == 1
 )
 
 // Though defeating enemies gives 800 points (which can only otherwise be given at once as a bonus),
@@ -121,18 +138,18 @@ achievement(
 achievement(
     title = "Barrel Breaker", description = "Destroy a barrel with a hammer", points = 1,
     id = 114046, badge = "124573", published = "6/14/2020 11:54:38 PM", modified = "6/20/2020 4:40:52 PM",
-    trigger = byte(0x000006) != 0 && byte(0x000010) == 0 && never(byte(0x00000C) != 255) &&
-              ((once(byte(0x000003) != 0) && byte(0x000003) == 0 && prior(byte(0x000003)) != 145) ||
-               (once(byte(0x000002) != 0) && byte(0x000002) == 0 && prior(byte(0x000002)) != 145) ||
-               (once(byte(0x000001) != 0) && byte(0x000001) == 0 && prior(byte(0x000001)) != 145) ||
-               (once(byte(0x000000) != 0) && byte(0x000000) == 0 && prior(byte(0x000000)) != 145))
+    trigger = has_hammer() && level() == 0 && never(game_state() != 0xFF) &&
+              ((once(enemy_yposition(3) != 0) && enemy_yposition(3) == 0 && prior(enemy_yposition(3)) != 145) ||
+               (once(enemy_yposition(2) != 0) && enemy_yposition(2) == 0 && prior(enemy_yposition(2)) != 145) ||
+               (once(enemy_yposition(1) != 0) && enemy_yposition(1) == 0 && prior(enemy_yposition(1)) != 145) ||
+               (once(enemy_yposition(0) != 0) && enemy_yposition(0) == 0 && prior(enemy_yposition(0)) != 145))
 )
 
 // This achievement is significantly simpler than the barrel one as only one fire can be destroyed via the hammer
 achievement(
     title = "Fire Extinguisher", description = "Destroy a Fire with a hammer", points = 1,
     id = 114047, badge = "124574", published = "6/14/2020 11:54:43 PM", modified = "6/14/2020 11:54:43 PM",
-    trigger = byte(0x00000C) == 255 && byte(0x000010) == 1 && byte(0x000006) != 0 && byte(0x000002) == 0
+    trigger = game_state() == 0xFF && level() == 1 && has_hammer() && enemy_yposition(2) == 0
 )
 
 // 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
@@ -140,7 +157,7 @@ achievement(
 achievement(
     title = "Barrel-ly a Hazard", description = "Complete 25m with 2 lives remaining", points = 10,
     id = 114048, badge = "124575", published = "6/14/2020 11:54:49 PM", modified = "6/15/2020 2:47:31 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0 && byte(0x000023) == 2
+    trigger = game_state() == 2 && level() == 0 && full_lives()
 )
 
 // 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
@@ -148,7 +165,7 @@ achievement(
 achievement(
     title = "The Perfect Run", description = "Complete 100m with 2 lives remaining", points = 25,
     id = 114049, badge = "124576", published = "6/14/2020 11:54:52 PM", modified = "6/15/2020 2:47:36 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 1 && byte(0x000023) == 2
+    trigger = game_state() == 2 && level() == 1 && full_lives()
 )
 
 // Bonus of 4300 is highest I've obtained, but requires incredible RNG to pull off. 4200 was decided as a less frustrating goal.
@@ -156,7 +173,7 @@ achievement(
 achievement(
     title = "Barrel Blast", description = "Complete 25m with a bonus of 4200 or higher", points = 25,
     id = 114050, badge = "124579", published = "6/14/2020 11:54:58 PM", modified = "6/15/2020 2:47:41 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0 && byte(0x000024) >= 0x42
+    trigger = game_state() == 2 && level() == 0 && bonus() >= 0x42
 )
 
 // Bonus of 4000 is highest I've obtained. Requires a fair amount of RNG but is fair enough as a hard achievement.
@@ -164,7 +181,7 @@ achievement(
 achievement(
     title = "Demolitions Expert", description = "Complete 100m with a bonus of 4000 or higher", points = 50,
     id = 114051, badge = "124577", published = "6/14/2020 11:55:03 PM", modified = "6/15/2020 2:47:45 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 1 && byte(0x000024) >= 0x40
+    trigger = game_state() == 2 && level() == 1 && bonus() >= 0x40
 )
 
 // This achievement is a reference to the point total that gives an extra life in the original arcade version of the game.
@@ -180,17 +197,24 @@ achievement(
 achievement(
     title = "It's Really Just Decorative", description = "Reach the ladder under Donkey Kong in 25m", points = 3,
     id = 114053, badge = "124584", published = "6/15/2020 3:59:02 AM", modified = "6/15/2020 3:59:02 AM",
-    trigger = byte(0x00000C) == 255 && byte(0x000010) == 0 && byte(0x000013) <= 36 && byte(0x00001B) <= 21
+    trigger = game_state() == 0xFF && level() == 0 && player_xpos() <= 36 && player_ypos() <= 21
 )
 
-rich_presence_conditional_display(byte(0x00000C) == 0 && byte(0x000023) == 2, "Starting a new game")
+rich_presence_conditional_display(game_state() == 0 && byte(0x000023) == 2, "Starting a new game")
 
 rich_presence_display("{0} {1}, 🚶x{2}. Score: {3}{4}{5}{6}00",
-    rich_presence_lookup("Status", byte(0x00000C), StatusLookup),
-    rich_presence_lookup("Level", byte(0x000010), LevelLookup),
+    rich_presence_lookup("Status", game_state(), StatusLookup),
+    rich_presence_lookup("Level", level(), LevelLookup),
     rich_presence_value("Digit", byte(0x000023)),
     rich_presence_value("Digit", high4(0x000007)),
     rich_presence_value("Digit", low4(0x000007)),
     rich_presence_value("Digit", high4(0x000008)),
     rich_presence_value("Digit", low4(0x000008))
 )
+
+leaderboard(title = "Hi-Score",
+            description = "Best score at game over",
+            start = game_state() == 0xFF && prev(game_state()) == 0,
+            cancel = !game_started(),
+            submit = game_state() == 0x00 && game_started(),
+            value = high4(0x000007)*100000 + low4(0x000007) * 10000 + high4(0x000008)*1000 + low4(0x000008) * 100)
