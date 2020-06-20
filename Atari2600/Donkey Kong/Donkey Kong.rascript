@@ -82,11 +82,14 @@
 //        Bit 0: 1 = Right, 0 = Left
 //        Bits 4-7: Set to 1 if a barrel is moving downwards
 
+
+// This port only includes 2 levels
 LevelLookup = {
     0: "25m",
     1: "100m",
 }
 
+// There are four known game states. State 0 is shared between unstarted game and game over.
 StatusLookup = {
     0: "Game Over at",
     1: "Continuing at",
@@ -94,18 +97,27 @@ StatusLookup = {
     0xFF: "Climbing at",
 }
 
+// Checks: Level = 0 (25m) and game state = 2 (level win)
 achievement(
     title = "The Journey Begins", description = "Complete 25m", points = 5,
     id = 114044, badge = "124570", published = "6/14/2020 11:54:27 PM", modified = "6/15/2020 2:47:19 AM",
-    trigger = byte(0x000010) == 0 && byte(0x00000C) == 2
+    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0
 )
 
+// Checks: Level = 1 (100m) and game state = 2 (level win)
 achievement(
     title = "...Wait Is That It?", description = "Complete 100m", points = 10,
     id = 114045, badge = "124571", published = "6/14/2020 11:54:33 PM", modified = "6/18/2020 8:30:18 PM",
     trigger = byte(0x00000C) == 2 && byte(0x000010) == 1
 )
 
+// Though defeating enemies gives 800 points (which can only otherwise be given at once as a bonus),
+// points are stored as big-endian binary coded decimal, which doesn't lend itself well to use as a hook.
+// As such, this achievement works off the following logic:
+// For each barrel: Checked to ensure it's been spawned at least once since the level transition
+// Check if the hammer is active (this check is somewhat redundant as there is no additional way to destroy barrels to my knowledge)
+// Check if at least one barrel (that has been spawned) has been destroyed via non-natural means 
+//    (barrels naturally despawn at y=145, where the hammer power-up cannot reach) so this is used as prior)
 achievement(
     title = "Barrel Breaker", description = "Destroy a barrel with a hammer", points = 1,
     id = 114046, badge = "124573", published = "6/14/2020 11:54:38 PM", modified = "6/20/2020 4:40:52 PM",
@@ -116,42 +128,55 @@ achievement(
                (once(byte(0x000000) != 0) && byte(0x000000) == 0 && prior(byte(0x000000)) != 145))
 )
 
+// This achievement is significantly simpler than the barrel one as only one fire can be destroyed via the hammer
 achievement(
     title = "Fire Extinguisher", description = "Destroy a Fire with a hammer", points = 1,
     id = 114047, badge = "124574", published = "6/14/2020 11:54:43 PM", modified = "6/14/2020 11:54:43 PM",
     trigger = byte(0x00000C) == 255 && byte(0x000010) == 1 && byte(0x000006) != 0 && byte(0x000002) == 0
 )
 
+// 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
+// Same checks as "The Journey Begins" with the additional qualifier of lives = 2
 achievement(
     title = "Barrel-ly a Hazard", description = "Complete 25m with 2 lives remaining", points = 10,
     id = 114048, badge = "124575", published = "6/14/2020 11:54:49 PM", modified = "6/15/2020 2:47:31 AM",
     trigger = byte(0x00000C) == 2 && byte(0x000010) == 0 && byte(0x000023) == 2
 )
 
+// 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
+// Same checks as "...Wait Is That It?" with the additional qualifier of lives = 2
 achievement(
     title = "The Perfect Run", description = "Complete 100m with 2 lives remaining", points = 25,
     id = 114049, badge = "124576", published = "6/14/2020 11:54:52 PM", modified = "6/15/2020 2:47:36 AM",
     trigger = byte(0x00000C) == 2 && byte(0x000010) == 1 && byte(0x000023) == 2
 )
 
+// Bonus of 4300 is highest I've obtained, but requires incredible RNG to pull off. 4200 was decided as a less frustrating goal.
+// Same checks as "The Journey Begins" with additional qualifier of the bonus being above 0x42 (Binary Coded Decimal)
 achievement(
     title = "Barrel Blast", description = "Complete 25m with a bonus of 4200 or higher", points = 25,
     id = 114050, badge = "124579", published = "6/14/2020 11:54:58 PM", modified = "6/15/2020 2:47:41 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0 && byte(0x000024) >= 66
+    trigger = byte(0x00000C) == 2 && byte(0x000010) == 0 && byte(0x000024) >= 0x42
 )
 
+// Bonus of 4000 is highest I've obtained. Requires a fair amount of RNG but is fair enough as a hard achievement.
+// Same checks as "...Wait Is That It?" with additional qualifier of the bonus being above 0x40 (Binary Coded Decimal)
 achievement(
     title = "Demolitions Expert", description = "Complete 100m with a bonus of 4000 or higher", points = 50,
     id = 114051, badge = "124577", published = "6/14/2020 11:55:03 PM", modified = "6/15/2020 2:47:45 AM",
-    trigger = byte(0x00000C) == 2 && byte(0x000010) == 1 && byte(0x000024) >= 64
+    trigger = byte(0x00000C) == 2 && byte(0x000010) == 1 && byte(0x000024) >= 0x40
 )
 
+// This achievement is a reference to the point total that gives an extra life in the original arcade version of the game.
+// Notably the player doesn't actually get an extra life here, so this doesn't contradict the two-life achievements.
+// Checks if the highest two digits of the score (XX0000) are at least 0x02 (Binary Coded Decimal)
 achievement(
     title = "Extra Life Please?", description = "Score 20,000 points", points = 50,
     id = 114052, badge = "124578", published = "6/14/2020 11:55:07 PM", modified = "6/14/2020 11:55:07 PM",
     trigger = byte(0x000007) >= 2
 )
 
+// Checks if the level = 0 (25m) and the player X and Y positions are at least at the position indicated
 achievement(
     title = "It's Really Just Decorative", description = "Reach the ladder under Donkey Kong in 25m", points = 3,
     id = 114053, badge = "124584", published = "6/15/2020 3:59:02 AM", modified = "6/15/2020 3:59:02 AM",
