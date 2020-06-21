@@ -217,4 +217,4 @@ leaderboard(title = "Hi-Score",
             start = game_state() == 0xFF && prev(game_state()) == 0,
             cancel = !game_started(),
             submit = game_state() == 0x00 && game_started(),
-            value = high4(0x000007)*100000 + low4(0x000007) * 10000 + high4(0x000008)*1000 + low4(0x000008) * 100)
+            value = high4(0x000007) * 100000 + low4(0x000007) * 10000 + high4(0x000008) * 1000 + low4(0x000008) * 100)
