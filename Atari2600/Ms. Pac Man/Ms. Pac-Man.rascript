@@ -25,6 +25,8 @@
 //        Bit 4: 1 shows Ms. PACMAN logo, 0 shows score
 // $0018: Set to 1 on game over
 // $0021: ff during death
+// $0074: Upper 2 bits: Keeps track of how many ghosts are eaten
+//        Lower 6 bits: Power pellet timer
 // $0077: Pellets eaten on current maze (0x9A = victory)
 // $0078: Score (0000XX)
 // $0079: Score (00XX00)
