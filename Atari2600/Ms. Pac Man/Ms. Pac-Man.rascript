@@ -27,7 +27,13 @@
 // $0021: ff during death
 // $0074: Upper 2 bits: Keeps track of how many ghosts are eaten
 //        Lower 6 bits: Power pellet timer
-// $0077: Pellets eaten on current maze (0x9A = victory)
+// $0077: Pellets eaten on current maze
+//
+//        Victory Conditions:
+//        Maze 0: 0x9A
+//        Maze 1: 0x96
+//        Maze 2: 0x9E
+//        Maze 3: 0x9A
 // $0078: Score (0000XX)
 // $0079: Score (00XX00)
 // $007A: Score (XX0000)
@@ -45,16 +51,46 @@
 //        0x5: Pear (2000 points)
 //        0x6: Banana (5000 points)
 
+function maze() => byte(0x0000)
 
-function difficulty() => byte(0x000013)
+function pellets_eaten() => byte(0x0077)
+
+function difficulty() => byte(0x0013)
 
 function arcade_mode() => difficulty() == 3
 
-function game_over() => byte(0x000018) == 1
+function game_over() => byte(0x0018) == 1
 
 function demo_mode() => bit6(0x0014) == 1
 
 function lives() => low4(0x007B)
+
+function has_power_pellet() => bit5(0x0074) != 0 || bit4(0x0074) != 0 || low4(0x0074) != 0
+
+function four_ghosts_eaten() => bit6(0x0074) == 0 && prev(bit6(0x0074)) == 1 && bit7(0x0074) == 0 && prev(bit7(0x0074)) == 1 
+
+function score() => high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078)
+
+achievement(
+    title = "Level 1 Clear", description = "Clear the first unique maze in Arcade Mode", points = 5,
+    trigger = !demo_mode() && maze() == 0 && pellets_eaten() == 0x9a && arcade_mode()
+)
+
+achievement(
+    title = "Level 3 Clear", description = "Clear the second unique maze in Arcade Mode", points = 5,
+    trigger = maze() == 1 && pellets_eaten() == 0x96 && arcade_mode()
+)
+
+achievement(
+    title = "Level 5 Clear", description = "Clear the third unique maze in Arcade Mode", points = 10,
+    trigger = maze() == 2 && pellets_eaten() == 0x9e && arcade_mode()
+)
+
+achievement(
+    title = "Level 7 Clear", description = "Clear the fourth unique maze in Arcade Mode", points = 25,
+    trigger = maze() == 3 && pellets_eaten() == 0x9a && arcade_mode()
+)
+
 
 leaderboard(title = "High Score (Arcade Mode)",
             description = "Best score at game over",
@@ -69,7 +105,7 @@ leaderboard(title = "High Score (1-Ghost Mode)",
             start = difficulty() == 0 && !demo_mode(),
             cancel = (difficulty() != 0 || demo_mode()) && !game_over(),
             submit = game_over() && lives() == 0,
-            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            value = score())
             
             
 leaderboard(title = "High Score (2-Ghost Mode)",
@@ -77,7 +113,7 @@ leaderboard(title = "High Score (2-Ghost Mode)",
             start = difficulty() == 1 && !demo_mode(),
             cancel = (difficulty() != 1 || demo_mode()) && !game_over(),
             submit = game_over() && lives() == 0,
-            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            value = score())
             
             
 leaderboard(title = "High Score (3-Ghost Mode)",
@@ -85,4 +121,4 @@ leaderboard(title = "High Score (3-Ghost Mode)",
             start = difficulty() == 2 && !demo_mode(),
             cancel = (difficulty() != 2 || demo_mode()) && !game_over(),
             submit = game_over() && lives() == 0,
-            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            value =  score())
