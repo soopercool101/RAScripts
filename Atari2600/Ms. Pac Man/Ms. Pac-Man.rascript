@@ -52,9 +52,35 @@ function game_over() => byte(0x000018) == 1
 
 function demo_mode() => bit6(0x0014) == 1
 
+function lives() => low4(0x007B)
+
 leaderboard(title = "High Score (Arcade Mode)",
             description = "Best score at game over",
             start = arcade_mode() && !demo_mode(),
-            cancel = !arcade_mode() || (demo_mode() && !game_over()),
-            submit = game_over(),
+            cancel = (!arcade_mode() || demo_mode()) && !game_over(),
+            submit = game_over() && lives() == 0,
+            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            
+            
+leaderboard(title = "High Score (1-Ghost Mode)",
+            description = "Best score at game over",
+            start = difficulty() == 0 && !demo_mode(),
+            cancel = (difficulty() != 0 || demo_mode()) && !game_over(),
+            submit = game_over() && lives() == 0,
+            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            
+            
+leaderboard(title = "High Score (2-Ghost Mode)",
+            description = "Best score at game over",
+            start = difficulty() == 1 && !demo_mode(),
+            cancel = (difficulty() != 1 || demo_mode()) && !game_over(),
+            submit = game_over() && lives() == 0,
+            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            
+            
+leaderboard(title = "High Score (3-Ghost Mode)",
+            description = "Best score at game over",
+            start = difficulty() == 2 && !demo_mode(),
+            cancel = (difficulty() != 2 || demo_mode()) && !game_over(),
+            submit = game_over() && lives() == 0,
             value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
