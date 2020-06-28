@@ -2,6 +2,18 @@
 // #ID = 14260
 
 // $0000: Maze
+// $0001: Sue (Orange Ghost) State Flags
+//        Bit 7: 0 = normal, 1 = vulnerable
+//        Bit 6: 1 = eaten (eyes) only when bit 4 = 0
+// $0002: Inky (Blue Ghost) State Flags
+//        Bit 7: 0 = normal, 1 = vulnerable
+//        Bit 6: 1 = eaten (eyes) only when bit 4 = 0
+// $0003: Pinky (Pink Ghost) State Flags
+//        Bit 7: 0 = normal, 1 = vulnerable
+//        Bit 6: 1 = eaten (eyes) only when bit 4 = 0
+// $0004: Blinky (Red Ghost) State Flags
+//        Bit 7: 0 = normal, 1 = vulnerable
+//        Bit 6: 1 = eaten (eyes) only when bit 4 = 0
 // $0006: Sue (Orange Ghost) X-Position
 // $0007: Inky (Blue Ghost) X-Position
 // $0008: Pinky (Pink Ghost) X-Position
@@ -25,10 +37,18 @@
 //        Bit 4: 1 shows Ms. PACMAN logo, 0 shows score
 // $0018: Set to 1 on game over
 // $0021: ff during death
+// $0027: Game state timers:
+//        0x00 - 0x21: Starting level
+//        0x23-0x31: Respawning
+//        0x33-0x35: Eating ghost
+//        0x49-0x53: Dying
+//        0xff: Default in-game
+// $0029: Bit 6: 1 = Vulnerable ghosts
+//        Bit 4: 1 = White ghosts (when flashing at end)
 // $0074: Upper 2 bits: Keeps track of how many ghosts are eaten
 //        Lower 6 bits: Power pellet timer
 // $0077: Pellets eaten on current maze
-//
+//        
 //        Victory Conditions:
 //        Maze 0: 0x9A
 //        Maze 1: 0x96
