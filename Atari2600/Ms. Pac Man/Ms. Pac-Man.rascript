@@ -40,7 +40,7 @@
 // $0027: Game state timers:
 //        0x00 - 0x21: Starting level
 //        0x23-0x31: Respawning
-//        0x33-0x35: Eating ghost
+//        0x33-0x35: Eating ghost/fruit
 //        0x49-0x53: Dying
 //        0xff: Default in-game
 // $0029: Bit 6: 1 = Vulnerable ghosts
@@ -54,7 +54,9 @@
 //        Maze 1: 0x96
 //        Maze 2: 0x9E
 //        Maze 3: 0x9A
-// $0078: Score (0000XX)
+// $0078: Upper 4: Score (0000X0)
+//        
+//        Bit0: 1 if the extra life at 10000 points has been awarded, 0 if it has not
 // $0079: Score (00XX00)
 // $007A: Score (XX0000)
 //        
@@ -83,41 +85,156 @@ function game_over() => byte(0x0018) == 1
 
 function demo_mode() => bit6(0x0014) == 1
 
+function fruit() => high4(0x007B)
+
 function lives() => low4(0x007B)
 
 function has_power_pellet() => bit5(0x0074) != 0 || bit4(0x0074) != 0 || low4(0x0074) != 0
 
-function four_ghosts_eaten() => bit6(0x0074) == 0 && prev(bit6(0x0074)) == 1 && bit7(0x0074) == 0 && prev(bit7(0x0074)) == 1 
+function had_power_pellet() => prev(bit5(0x0074)) != 0 || prev(bit4(0x0074)) != 0 || prev(low4(0x0074)) != 0
 
-function score() => high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078)
+function fruit_eaten() => byte(0x000B) == 0 && prev(byte(0x000B)) != 0
+
+function ghost_eaten(index) => bit4(0x0001 + index) == 0 && bit6(0x0001 + index) == 1
+
+function ghost_eaten_once(index) => bit4(0x0001 + index) == 0 && bit6(0x0001 + index) == 1 && (prev(bit4(0x0001 + index)) == 1 || prev(bit6(0x0001 + index)) == 0) // Doesn't hit more than one time per ghost
+
+function score() => high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10
+
+function prev_score() => prev(high4(0x007A)) * 100000 + prev(low4(0x007A)) * 10000 + prev(high4(0x0079)) * 1000 + prev(low4(0x0079)) * 100 + prev(high4(0x0078)) * 10
+
+function ate_something() => byte(0x0027) == 0x33 && prev(byte(0x0027)) == 0xFF
 
 achievement(
-    title = "Level 1 Clear", description = "Clear the first unique maze in Arcade Mode", points = 5,
+    title = "Round 1 Clear", description = "Clear the first unique maze in Arcade Mode", points = 1,
     trigger = !demo_mode() && maze() == 0 && pellets_eaten() == 0x9a && arcade_mode()
 )
 
 achievement(
-    title = "Level 3 Clear", description = "Clear the second unique maze in Arcade Mode", points = 5,
+    title = "Round 3 Clear", description = "Clear the second unique maze in Arcade Mode", points = 5,
     trigger = maze() == 1 && pellets_eaten() == 0x96 && arcade_mode()
 )
 
 achievement(
-    title = "Level 5 Clear", description = "Clear the third unique maze in Arcade Mode", points = 10,
+    title = "Round 5 Clear", description = "Clear the third unique maze in Arcade Mode", points = 10,
     trigger = maze() == 2 && pellets_eaten() == 0x9e && arcade_mode()
 )
 
 achievement(
-    title = "Level 7 Clear", description = "Clear the fourth unique maze in Arcade Mode", points = 25,
+    title = "Round 7 Clear", description = "Clear the fourth unique maze in Arcade Mode", points = 25,
     trigger = maze() == 3 && pellets_eaten() == 0x9a && arcade_mode()
 )
 
+
+// Fruit despawn and eaten logic is too intertwined to do these achievements any other way as far as I can tell
+achievement(
+    title = "Cherry", description = "Eat a cherry in Arcade Mode", points = 1,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 0  && // Current fruit is cherry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Strawberry", description = "Eat a strawberry in Arcade Mode", points = 3,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 1  && // Current fruit is strawberry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Orange", description = "Eat an orange in Arcade Mode", points = 5,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 2  && // Current fruit is orange
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Pretzel", description = "Eat a pretzel in Arcade Mode", points = 5,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 3 && // Current fruit is strawberry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Apple", description = "Eat an apple in Arcade Mode", points = 10,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 4 && // Current fruit is strawberry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Pear", description = "Eat a pear in Arcade Mode", points = 10,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 5 && // Current fruit is strawberry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "Banana", description = "Eat a banana in Arcade Mode", points = 25,
+    trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
+              fruit() == 6 && // Current fruit is strawberry
+              ate_something() && // Ate something
+              fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
+              !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
+)
+
+achievement(
+    title = "A Light Snack", description = "Eat all 4 ghosts using a single Power Pellet", points = 10,
+    trigger = !demo_mode() && // Prevent unlock if demo mode manages to follow the restrictions (unlikely but seemingly possible)
+              arcade_mode() && // When changing difficulty, ghost flags sometimes stay where they are, one could in theory eat all ghosts except Sue in arcade before switching to single-ghost mode
+              once(bit5(0x0074) == 1) && // Used to prevent unecessary resets by the single power pellet restriction
+              once(ghost_eaten(0)) && once(ghost_eaten(1)) && once(ghost_eaten(2)) && once(ghost_eaten(3)) && // Eat every ghost once
+              never(!had_power_pellet() || // Power Pellet is taken the same frame that the last ghost is eaten, so a prev check is required here
+              (bit5(0x0074) == 1 && prev(bit5(0x0074)) == 0)) // Resets when the timer is extended by additional power pellets
+)
+
+// Currently too complicated for RATools
+//achievement(
+//    title = "A Full Meal", description = "Eat all 4 ghosts 4 times each during a single level/life", points = 50,
+//    trigger = !demo_mode() && // Prevent unlock if demo mode manages to follow the restrictions (nigh-impossible, but *technically possible* theoretically)
+//              arcade_mode() && // Just in case of junk data
+//              repeated(4, ghost_eaten_once(0)) && repeated(4, ghost_eaten_once(1)) && repeated(4, ghost_eaten_once(2)) && repeated(4, ghost_eaten_once(3)) && // Eat every ghost 4 times
+//              (never(pellets_eaten() < prev(pellets_eaten()) || lives() < prev(lives()))) // Reset on new level or new life
+//)
+
+achievement(
+    title = "A New Lease On Life", description = "Earn 10000 points and an extra life in Arcade Mode", points = 5,
+    trigger = arcade_mode() && byte(0x007A) != 0xFF && byte(0x007A) >= 1
+)
+
+achievement(
+    title = "Score 25000", description = "Earn 25000 points in Arcade Mode", points = 10,
+    trigger = arcade_mode() && byte(0x007A) != 0xFF && byte(0x007A) >= 2 && byte(0x0079) >= 0x50
+)
+
+achievement(
+    title = "High Scorer", description = "Earn 50000 points in Arcade Mode", points = 50,
+    trigger = arcade_mode() && byte(0x007A) != 0xFF && byte(0x007A) >= 5
+)
+
+achievement(
+    title = "Unstoppable", description = "Have the maximum of three lives at once in Arcade Mode", points = 10,
+    trigger = arcade_mode() && lives() == 3
+)
 
 leaderboard(title = "High Score (Arcade Mode)",
             description = "Best score at game over",
             start = arcade_mode() && !demo_mode(),
             cancel = (!arcade_mode() || demo_mode()) && !game_over(),
             submit = game_over() && lives() == 0,
-            value = high4(0x007A) * 100000 + low4(0x007A) * 10000 + high4(0x0079) * 1000 + low4(0x0079) * 100 + high4(0x0078) * 10 + low4(0x0078))
+            value = score())
             
             
 leaderboard(title = "High Score (1-Ghost Mode)",
