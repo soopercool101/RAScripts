@@ -208,7 +208,7 @@ achievement(
 )
 
 achievement(
-    title = "A Light Snack", description = "Eat all 4 ghosts using a single Power Pellet", points = 10,
+    title = "A Light Snack", description = "Eat all 4 ghosts using a single Power Pellet", points = 5,
     trigger = !demo_mode() && // Prevent unlock if demo mode manages to follow the restrictions (unlikely but seemingly possible)
               arcade_mode() && // When changing difficulty, ghost flags sometimes stay where they are, one could in theory eat all ghosts except Sue in arcade before switching to single-ghost mode
               once(bit5(0x0074) == 1) && // Used to prevent unecessary resets by the single power pellet restriction
