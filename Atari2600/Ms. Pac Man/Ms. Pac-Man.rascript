@@ -174,7 +174,7 @@ achievement(
 achievement(
     title = "My Favorite Fruit", description = "Eat a pretzel in Arcade Mode", points = 5,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
-              fruit() == 3 && // Current fruit is strawberry
+              fruit() == 3 && // Current fruit is pretzel
               ate_something() && // Ate something
               fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
               !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
@@ -183,7 +183,7 @@ achievement(
 achievement(
     title = "Kept the Doctor Away", description = "Eat an apple in Arcade Mode", points = 10,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
-              fruit() == 4 && // Current fruit is strawberry
+              fruit() == 4 && // Current fruit is apple
               ate_something() && // Ate something
               fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
               !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
@@ -192,7 +192,7 @@ achievement(
 achievement(
     title = "Un-pear-able", description = "Eat a pear in Arcade Mode", points = 10,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
-              fruit() == 5 && // Current fruit is strawberry
+              fruit() == 5 && // Current fruit is pear
               ate_something() && // Ate something
               fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
               !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
@@ -201,7 +201,7 @@ achievement(
 achievement(
     title = "...I Didn't Say Banana", description = "Eat a banana in Arcade Mode", points = 25,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
-              fruit() == 6 && // Current fruit is strawberry
+              fruit() == 6 && // Current fruit is banana
               ate_something() && // Ate something
               fruit_eaten() && // Despawn on same frame as ghost eaten also counts for this, but keeping this helps prevent false positives
               !(ghost_eaten_once(0) || ghost_eaten_once(1) || ghost_eaten_once(2) || ghost_eaten_once(3)) // The something eaten wasn't a ghost
