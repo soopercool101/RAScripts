@@ -105,6 +105,23 @@ function prev_score() => prev(high4(0x007A)) * 100000 + prev(low4(0x007A)) * 100
 
 function ate_something() => byte(0x0027) == 0x33 && prev(byte(0x0027)) == 0xFF
 
+FruitLookup = {
+    0: "Cherry",
+    1: "Strawberry",
+    2: "Orange",
+    3: "Pretzel",
+    4: "Apple",
+    5: "Pear",
+    6: "Banana"
+}
+
+ModeLookup = {
+    0: "Single-Ghost",
+    1: "2-Ghosts",
+    2: "3-Ghosts",
+    3: "Arcade"
+}
+
 achievement(
     title = "Round 1 Clear", description = "Clear the first unique maze in Arcade Mode", points = 1,
     trigger = !demo_mode() && maze() == 0 && pellets_eaten() == 0x9a && arcade_mode()
@@ -128,7 +145,7 @@ achievement(
 
 // Fruit despawn and eaten logic is too intertwined to do these achievements any other way as far as I can tell
 achievement(
-    title = "Cherry", description = "Eat a cherry in Arcade Mode", points = 1,
+    title = "Popped a Cherry", description = "Eat a cherry in Arcade Mode", points = 1,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 0  && // Current fruit is cherry
               ate_something() && // Ate something
@@ -137,7 +154,7 @@ achievement(
 )
 
 achievement(
-    title = "Strawberry", description = "Eat a strawberry in Arcade Mode", points = 3,
+    title = "What, No Cream?", description = "Eat a strawberry in Arcade Mode", points = 3,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 1  && // Current fruit is strawberry
               ate_something() && // Ate something
@@ -146,7 +163,7 @@ achievement(
 )
 
 achievement(
-    title = "Orange", description = "Eat an orange in Arcade Mode", points = 5,
+    title = "Orange You Glad...", description = "Eat an orange in Arcade Mode", points = 5,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 2  && // Current fruit is orange
               ate_something() && // Ate something
@@ -155,7 +172,7 @@ achievement(
 )
 
 achievement(
-    title = "Pretzel", description = "Eat a pretzel in Arcade Mode", points = 5,
+    title = "My Favorite Fruit", description = "Eat a pretzel in Arcade Mode", points = 5,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 3 && // Current fruit is strawberry
               ate_something() && // Ate something
@@ -164,7 +181,7 @@ achievement(
 )
 
 achievement(
-    title = "Apple", description = "Eat an apple in Arcade Mode", points = 10,
+    title = "Kept the Doctor Away", description = "Eat an apple in Arcade Mode", points = 10,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 4 && // Current fruit is strawberry
               ate_something() && // Ate something
@@ -173,7 +190,7 @@ achievement(
 )
 
 achievement(
-    title = "Pear", description = "Eat a pear in Arcade Mode", points = 10,
+    title = "Un-pear-able", description = "Eat a pear in Arcade Mode", points = 10,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 5 && // Current fruit is strawberry
               ate_something() && // Ate something
@@ -182,7 +199,7 @@ achievement(
 )
 
 achievement(
-    title = "Banana", description = "Eat a banana in Arcade Mode", points = 25,
+    title = "...I Didn't Say Banana", description = "Eat a banana in Arcade Mode", points = 25,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 6 && // Current fruit is strawberry
               ate_something() && // Ate something
@@ -215,7 +232,7 @@ achievement(
 )
 
 achievement(
-    title = "Score 25000", description = "Earn 25000 points in Arcade Mode", points = 10,
+    title = "25k Working From Home", description = "Earn 25000 points in Arcade Mode", points = 10,
     trigger = arcade_mode() && byte(0x007A) != 0xFF && byte(0x007A) >= 2 && byte(0x0079) >= 0x50
 )
 
@@ -227,6 +244,20 @@ achievement(
 achievement(
     title = "Unstoppable", description = "Have the maximum of three lives at once in Arcade Mode", points = 10,
     trigger = arcade_mode() && lives() == 3
+)
+
+rich_presence_conditional_display(demo_mode(), "On the Title Screen")
+
+rich_presence_display("{0} Mode, Maze: {1}, Bonus Fruit: {2}, 🚶x{3}. Score: {4}{5}{6}{7}{8}0",
+    rich_presence_lookup("Mode", difficulty(), ModeLookup),
+    rich_presence_value("Digit", maze()),
+    rich_presence_lookup("Fruit", fruit(), FruitLookup),
+    rich_presence_value("Digit", lives()),
+    rich_presence_value("Digit", high4(0x007A)),
+    rich_presence_value("Digit", low4(0x007A)),
+    rich_presence_value("Digit", high4(0x0079)),
+    rich_presence_value("Digit", low4(0x0079)),
+    rich_presence_value("Digit", high4(0x0078))
 )
 
 leaderboard(title = "High Score (Arcade Mode)",
