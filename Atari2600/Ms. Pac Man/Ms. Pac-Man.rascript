@@ -128,8 +128,18 @@ achievement(
 )
 
 achievement(
+    title = "Ghost-Free Diet", description = "In Arcade Mode and a single life, eat every normal pellet on the first maze before eating any Power Pellets", points = 10,
+    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x96 && arcade_mode() && never(has_power_pellet() || demo_mode() || lives() != prev(lives()) || maze() != 0)
+)
+
+achievement(
     title = "Round 3 Clear", description = "Clear the second unique maze in Arcade Mode", points = 5,
     trigger = maze() == 1 && pellets_eaten() == 0x96 && arcade_mode()
+)
+
+achievement(
+    title = "Afraid of No Ghost", description = "In Arcade Mode and a single life, eat every normal pellet on the second maze before eating any Power Pellets", points = 25,
+    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x92 && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 1)
 )
 
 achievement(
@@ -138,10 +148,19 @@ achievement(
 )
 
 achievement(
+    title = "Busting Makes Me Feel Bad", description = "In Arcade Mode and a single life, eat every normal pellet on the third maze before eating any Power Pellets", points = 50,
+    trigger = once(pellets_eaten() == 2) && pellets_eaten() == 0x9a && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 2)
+)
+
+achievement(
     title = "Round 7 Clear", description = "Clear the fourth unique maze in Arcade Mode", points = 25,
     trigger = maze() == 3 && pellets_eaten() == 0x9a && arcade_mode()
 )
 
+achievement(
+    title = "Ghastly Pacifist", description = "In Arcade Mode and a single life, eat every normal pellet on the fourth maze before eating any Power Pellets", points = 50,
+    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x96 && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 3)
+)
 
 // Fruit despawn and eaten logic is too intertwined to do these achievements any other way as far as I can tell
 achievement(
@@ -199,7 +218,7 @@ achievement(
 )
 
 achievement(
-    title = "...I Didn't Say Banana", description = "Eat a banana in Arcade Mode", points = 25,
+    title = "...I Didn't Say Banana", description = "Eat a banana in Arcade Mode", points = 10,
     trigger = !demo_mode() && arcade_mode() && // Arcade mode (and not demo mode)
               fruit() == 6 && // Current fruit is banana
               ate_something() && // Ate something
@@ -237,7 +256,7 @@ achievement(
 )
 
 achievement(
-    title = "High Scorer", description = "Earn 50000 points in Arcade Mode", points = 50,
+    title = "High Scorer", description = "Earn 50000 points in Arcade Mode", points = 25,
     trigger = arcade_mode() && byte(0x007A) != 0xFF && byte(0x007A) >= 5
 )
 
