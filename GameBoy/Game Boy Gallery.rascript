@@ -27,7 +27,7 @@
 //        03: Manhole 04:Cement Factory
 // $C015: 00: Game A 01: Game B
 // $C016: Music
-//        00: Game Boy 01: Game
+//        00: Game Boy 01: Game & Watch
 // $C029: 00 on Title/Demo Mode
 //        01 otherwise
 // $C116: [Ball]
@@ -101,27 +101,158 @@ function high_score(game, mode)
 
 function score() => high4(0xD80E) * 1000 + low4(0xD80E) * 100 + high4(0xD80F) * 10 + low4(0xD80F)
 
-function in_game() => byte(0x9852) != 0xFF && bit0(0xC029) == 1
+function in_game() => byte(0x9852) != 0xFF && prev(byte(0x9852)) != 0xFF && bit0(0xC029) == 1
+
+achievement(
+    title = "Ball: Give Me an 'A'!", description = "Gain 100 Points in Game A and be cheered for (No Cheat Mode)", points = 1,
+    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 1
+)
+
+achievement(
+    title = "Ball: Give Me a 'B'!", description = "Gain 100 Points in Game B and be cheered for (No Cheat Mode)", points = 5,
+    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 1
+)
+
+achievement(
+    title = "Ball: Keep on Rolling", description = "Gain 200 Points in Game A and watch a balancing act (No Cheat Mode)", points = 5,
+    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Ball: Having a Ball", description = "Gain 200 Points in Game B and watch a balancing act (No Cheat Mode)", points = 10,
+    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Vermin: Chicks Dig Whac-A-Mole", description = "Gain 200 Points in Game A and meet the girl next door (No Cheat Mode)", points = 1,
+    trigger = game() == 1 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Vermin: Showing Off Your Skills", description = "Gain 200 Points in Game B and meet the girl next door (No Cheat Mode)", points = 5,
+    trigger = game() == 1 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Vermin: A More Permanent Solution", description = "Gain 500 Points in Game A and meet the spearman (No Cheat Mode)", points = 5,
+    trigger = game() == 1 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 5
+)
+
+achievement(
+    title = "Vermin: Thanks, But I'll Stick to Hammers", description = "Gain 500 Points in Game B and meet the spearman (No Cheat Mode)", points = 10,
+    trigger = game() == 1 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 5
+)
+
+achievement(
+    title = "Flagman: Row, Row, Row Your Boat", description = "Gain 20 Points in Game A and see the rowboat (No Cheat Mode)", points = 5,
+    trigger = game() == 2 && mode() == 0 && in_game() && !cheating() && byte(0xD80F) >= 0x20
+)
+
+achievement(
+    title = "Flagman: Please Rescue Me", description = "Gain 20 Points in Game B and see the rowboat (No Cheat Mode)", points = 10,
+    trigger = game() == 2 && mode() == 1 && in_game() && !cheating() && byte(0xD80F) >= 0x20
+)
+
+achievement(
+    title = "Flagman: I'm Sailing Away", description = "Gain 30 Points in Game A and see the yacht (No Cheat Mode)", points = 10,
+    trigger = game() == 2 && mode() == 0 && in_game() && !cheating() && byte(0xD80F) >= 0x30
+)
+
+achievement(
+    title = "Flagman: SOS", description = "Gain 30 Points in Game B and see the yacht (No Cheat Mode)", points = 25,
+    trigger = game() == 2 && mode() == 1 && in_game() && !cheating() && byte(0xD80F) >= 0x30
+)
+
+achievement(
+    title = "Manhole: Float Like a Butterfly", description = "Gain 300 Points in Game A and see a butterfly (No Cheat Mode)", points = 1,
+    trigger = game() == 3 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 3
+)
+
+achievement(
+    title = "Manhole: Something Something Symbolism", description = "Gain 300 Points in Game B and see a butterfly (No Cheat Mode)", points = 5,
+    trigger = game() == 3 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 3
+)
+
+achievement(
+    title = "Manhole: Now to Find Some Bees", description = "Gain 400 Points in Game A and see a flock of birds (No Cheat Mode)", points = 5,
+    trigger = game() == 3 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 4
+)
+
+achievement(
+    title = "Manhole: This Is for the Birds", description = "Gain 400 Points in Game B and see a flock of birds (No Cheat Mode)", points = 10,
+    trigger = game() == 3 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 4
+)
+
+achievement(
+    title = "Manhole: It's Getting Hot In Here", description = "Gain 300 Points without any misses in Game A and enter Fever Mode (No Cheat Mode)", points = 10,
+    trigger = game() == 3 && mode() == 0 && in_game() && !cheating() && byte(0xC12B) == 0xFF
+)
+
+achievement(
+    title = "Manhole: Is Raw Sewage Bad For You?", description = "Gain 300 Points without any misses in Game B and enter Fever Mode (No Cheat Mode)", points = 25,
+    trigger = game() == 3 && mode() == 1 && in_game() && !cheating() && byte(0xC12B) == 0xFF
+)
+
+achievement(
+    title = "Cement Factory: Bring Your Child to Work Day", description = "Gain 200 Points in Game A and watch someone skip rope (No Cheat Mode)", points = 2,
+    trigger = game() == 4 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Cement Factory: Seriously Seems Hazardous", description = "Gain 200 Points in Game B and watch someone skip rope (No Cheat Mode)", points = 5,
+    trigger = game() == 4 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 2
+)
+
+achievement(
+    title = "Cement Factory: Free Balloon Day", description = "Gain 500 Points in Game A and watch someone blow a balloon (No Cheat Mode)", points = 5,
+    trigger = game() == 4 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 5
+)
+
+achievement(
+    title = "Cement Factory: Am I the Only One Working Here?", description = "Gain 500 Points in Game B and watch someone blow a balloon (No Cheat Mode)", points = 10,
+    trigger = game() == 4 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 5
+)
+
+achievement(
+    title = "Cement Factory: Boiling Cement", description = "Gain 300 Points without any misses in Game A and enter Fever Mode (No Cheat Mode)", points = 10,
+    trigger = game() == 4 && mode() == 0 && in_game() && !cheating() && bit0(0xC85A) == 1
+)
+
+achievement(
+    title = "Cement Factory: Out of Sick Days", description = "Gain 300 Points without any misses in Game B and enter Fever Mode (No Cheat Mode)", points = 25,
+    trigger = game() == 4 && mode() == 1 && in_game() && !cheating() && bit0(0xC85A) == 1
+)
+
+achievement(
+    title = "Jack of All Trades", description = "Earn at least 10 points in Flagman and 100 points in all other games in a single session (A or B, No Cheat Mode)", points = 10,
+    trigger = once(game() == 0 && byte(0xD80E) >= 1)
+    && once(game() == 1 && byte(0xD80E) >= 1)
+    && once(game() == 2 && byte(0xD80F) >= 0x10)
+    && once(game() == 3 && byte(0xD80E) >= 1)
+    && once(game() == 4 && byte(0xD80E) >= 1)
+    && never(cheating())
+    && unless(byte(0x9852) == 0xFF || prev(byte(0x9852)) == 0xFF || bit0(0xC029) != 1)
+)
 
 // High score is used for leaderboards instead of current score to allow submission by exiting game.
 // Scores are not saved between sessions and cheat mode does not update high scores, so this should work
 leaderboard(title = "Ball - Game A High Score",
             description = "Best score (Cheat mode not allowed)",
-            start = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xC116) == 0,
+            start = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xC116) == 0 && prev(byte(0xC116)) != 0x0f,
             cancel = cheating(),
             submit = !in_game() || byte(0xC116) == 0x0f,
             value = high_score(0, 0))
             
 leaderboard(title = "Ball - Game B High Score",
             description = "Best score (Cheat mode not allowed)",
-            start = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xC116) == 0,
+            start = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xC116) == 0 && prev(byte(0xC116)) != 0x0f,
             cancel = cheating(),
             submit = !in_game() || byte(0xC116) == 0x0f,
             value = high_score(0, 1))
 
 leaderboard(title = "Vermin - Game A High Score",
             description = "Best score (Cheat mode not allowed)",
-            start = game() == 1 && mode() == 0 && in_game() && !cheating() && byte(0xD828) == 0,
+            start = game() == 1 && mode() == 0 && in_game() && !cheating() && byte(0xD828) == 0 && prev(byte(0xD828)) != 3,
             cancel = cheating(),
             submit = !in_game() || byte(0xD828) == 3,
             value = high_score(1, 0))
