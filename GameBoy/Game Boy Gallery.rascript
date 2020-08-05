@@ -105,22 +105,22 @@ function in_game() => byte(0x9852) != 0xFF && prev(byte(0x9852)) != 0xFF && bit0
 
 achievement(
     title = "Ball: Give Me an 'A'!", description = "Gain 100 Points in Game A and be cheered for (No Cheat Mode)", points = 1,
-    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 1
+    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) == 1
 )
 
 achievement(
     title = "Ball: Give Me a 'B'!", description = "Gain 100 Points in Game B and be cheered for (No Cheat Mode)", points = 5,
-    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 1
+    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) == 1
 )
 
 achievement(
     title = "Ball: Keep on Rolling", description = "Gain 200 Points in Game A and watch a balancing act (No Cheat Mode)", points = 5,
-    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) >= 2
+    trigger = game() == 0 && mode() == 0 && in_game() && !cheating() && byte(0xD80E) == 2
 )
 
 achievement(
     title = "Ball: Having a Ball", description = "Gain 200 Points in Game B and watch a balancing act (No Cheat Mode)", points = 10,
-    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) >= 2
+    trigger = game() == 0 && mode() == 1 && in_game() && !cheating() && byte(0xD80E) == 2
 )
 
 achievement(
@@ -225,7 +225,7 @@ achievement(
 
 achievement(
     title = "Jack of All Trades", description = "Earn at least 10 points in Flagman and 100 points in all other games in a single session (A or B, No Cheat Mode)", points = 10,
-    trigger = once(game() == 0 && byte(0xD80E) >= 1)
+    trigger = once(game() == 0 && byte(0xD80E) == 1)
     && once(game() == 1 && byte(0xD80E) >= 1)
     && once(game() == 2 && byte(0xD80F) >= 0x10)
     && once(game() == 3 && byte(0xD80E) >= 1)
