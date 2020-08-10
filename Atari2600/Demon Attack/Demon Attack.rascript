@@ -97,7 +97,7 @@ leaderboard(title = "High Score (Demon Attack: Special Co-Op Version)",
             submit = game_end(),
             value = score1() + score2())
 
-leaderboard(title = "High Score (Advanced Demon Attack: Special Co-Op Version)",
+leaderboard(title = "High Score (Tracer Shot Demon Attack: Special Co-Op Version)",
             description = "Best combined Game 10 score",
             start = game() == 0x10 && game_start(),
             cancel = demo_mode(),
