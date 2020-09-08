@@ -101,7 +101,7 @@ function high_score(game, mode)
 
 function score() => high4(0xD80E) * 1000 + low4(0xD80E) * 100 + high4(0xD80F) * 10 + low4(0xD80F)
 
-function in_game() => byte(0x9852) != 0xFF && prev(byte(0x9852)) != 0xFF && bit0(0xC029) == 1
+function in_game() => byte(0x9852) != 0xFF && byte(0x9852) != 0xBA && bit0(0xC029) == 1
 
 achievement(
     title = "Ball: Give Me an 'A'!", description = "Gain 100 Points in Game A and be cheered for (No Cheat Mode)", points = 1,
