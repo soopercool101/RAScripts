@@ -106,13 +106,13 @@ function prev_score() => prev(high4(0x007A)) * 100000 + prev(low4(0x007A)) * 100
 function ate_something() => byte(0x0027) == 0x33 && prev(byte(0x0027)) == 0xFF
 
 FruitLookup = {
-    0: "Cherry",
-    1: "Strawberry",
-    2: "Orange",
-    3: "Pretzel",
-    4: "Apple",
-    5: "Pear",
-    6: "Banana"
+    0: "🍒",
+    1: "🍓",
+    2: "🍊",
+    3: "🥨",
+    4: "🍎",
+    5: "🍐",
+    6: "🍌"
 }
 
 ModeLookup = {
