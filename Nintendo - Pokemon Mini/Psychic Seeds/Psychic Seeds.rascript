@@ -337,6 +337,42 @@ function Minidex_Count() => bitcount(Minidex_Page(0))
                           + bitcount(Minidex_Page(4))
 
 function Stage_Berries(index) => byte(0x4fc + index)
+function Berry_Count() => Stage_Berries(0) +    // Stage 1
+                          Stage_Berries(1) +    // Stage 2
+                          Stage_Berries(2) +    // Stage 3
+                          Stage_Berries(3) +    // Stage 4
+                                      //4       // Bonus 1 (Has a berry register but no berries, so skip)
+                          Stage_Berries(5) +    // Stage 5
+                          Stage_Berries(6) +    // Stage 6
+                          Stage_Berries(7) +    // Stage 7
+                          Stage_Berries(8) +    // Stage 8
+                                      //9       // Bonus 2 (Has a berry register but no berries, so skip)
+                          Stage_Berries(10) +   // Stage 9
+                          Stage_Berries(11) +   // Stage 10
+                          Stage_Berries(12) +   // Stage 11
+                          Stage_Berries(13) +   // Stage 12
+                                      //14      // Bonus 3 (Has a berry register but no berries, so skip)
+                          Stage_Berries(15) +   // Stage 13
+                          Stage_Berries(16) +   // Stage 14
+                          Stage_Berries(17) +   // Stage 15
+                          Stage_Berries(18) +   // Stage 16
+                                      //19      // Bonus 4 (Has a berry register but no berries, so skip)
+                          Stage_Berries(20) +   // Stage 17
+                          Stage_Berries(21) +   // Stage 18
+                          Stage_Berries(22) +   // Stage 19
+                          Stage_Berries(23) +   // Stage 20
+                                      //24      // Bonus 5 (Has a berry register but no berries, so skip)
+                          Stage_Berries(25) +   // Stage 21
+                          Stage_Berries(26) +   // Stage 22
+                          Stage_Berries(27) +   // Stage 23
+                          Stage_Berries(28)     // Stage 24
+                                      //29      // Bonus 5 (Has a berry register but no berries, so skip)
+function DEMO_Stage_Berries(index) => byte(0x4fe + index)
+function DEMO_Berry_Count() => DEMO_Stage_Berries(0) +  // Demo Stage 1
+                               DEMO_Stage_Berries(1) +  // Demo Stage 2
+                               DEMO_Stage_Berries(2) +  // Demo Stage 3
+                               DEMO_Stage_Berries(3)    // Demo Stage 4
+                                                //4     // Demo Bonus 1 (Has a berry register but no berries, so skip)
 
 //*********************************************\\
 //                ACHIEVEMENTS                 \\
@@ -573,40 +609,10 @@ achievement(
 )
 
 achievement(
-    title = "Berry Master", description = "Collect all berries and unlock Celebi", points = 25,
+    title = "Berry Master", description = "Collect all berries and catch Celebi", points = 25,
     trigger = unless(PlayingDemo()) &&      // Don't track measured when in demo (the achievement is already impossible in demo, this just ensures measured bar doesn't show glitched values)
               measured( // Measured bar for berry total (Each non-bonus level has 5 berries, for a total of 120)
-                Stage_Berries(0) +          // Stage 1
-                Stage_Berries(1) +          // Stage 2
-                Stage_Berries(2) +          // Stage 3
-                Stage_Berries(3) +          // Stage 4
-                            //4             // Bonus 1 (Has a berry register but no berries, so skip)
-                Stage_Berries(5) +          // Stage 5
-                Stage_Berries(6) +          // Stage 6
-                Stage_Berries(7) +          // Stage 7
-                Stage_Berries(8) +          // Stage 8
-                            //9             // Bonus 2 (Has a berry register but no berries, so skip)
-                Stage_Berries(10) +         // Stage 9
-                Stage_Berries(11) +         // Stage 10
-                Stage_Berries(12) +         // Stage 11
-                Stage_Berries(13) +         // Stage 12
-                            //14            // Bonus 3 (Has a berry register but no berries, so skip)
-                Stage_Berries(15) +         // Stage 13
-                Stage_Berries(16) +         // Stage 14
-                Stage_Berries(17) +         // Stage 15
-                Stage_Berries(18) +         // Stage 16
-                            //19            // Bonus 4 (Has a berry register but no berries, so skip)
-                Stage_Berries(20) +         // Stage 17
-                Stage_Berries(21) +         // Stage 18
-                Stage_Berries(22) +         // Stage 19
-                Stage_Berries(23) +         // Stage 20
-                            //24            // Bonus 5 (Has a berry register but no berries, so skip)
-                Stage_Berries(25) +         // Stage 21
-                Stage_Berries(26) +         // Stage 22
-                Stage_Berries(27) +         // Stage 23
-                Stage_Berries(28)           // Stage 24
-                            //29            // Bonus 5 (Has a berry register but no berries, so skip)
-                >= 120                      // 120 total berries
+                Berry_Count() >= 120        // 120 total berries
               ) &&
               once(In_Game()) &&            // Unlock happens on stage select. Prevent resetting to get the unlock by forcing at least one level done
               Special_Pokemon_Caught() &&   // Special Catch (from stage select)
@@ -885,7 +891,9 @@ rich_presence_display("Playing ~Homebrew~ Pokemon - Psychic Seeds")
 rich_presence_conditional_display(In_Menu(), "In a menu")
 
 // Stage selection
-rich_presence_conditional_display(Stage_Select(), "Selecting a stage")
+rich_presence_conditional_display(Stage_Select(), "Selecting a stage | 🍓{0}/120",
+    rich_presence_value("Digit", Berry_Count())
+)
 
 // Minidex viewing
 rich_presence_conditional_display(Minidex(), "Viewing the Minidex | {0}/34 caught",
@@ -893,13 +901,13 @@ rich_presence_conditional_display(Minidex(), "Viewing the Minidex | {0}/34 caugh
 )
 
 // Caught a pokemon in a level
-rich_presence_conditional_display(Pokemon_Caught_RP(), "Caught a {0} in {1}!",
+rich_presence_conditional_display(Pokemon_Caught_RP(), "Caught {0} in {1}!",
     rich_presence_lookup("Pokemon", Current_Pokemon(), PokemonLookup),
     rich_presence_lookup("Stage", Level(), StageLookup)
 )
 
 // Caught a special pokemon from the stage select screen
-rich_presence_conditional_display(Special_Pokemon_Caught_RP(), "Caught a {0}!",
+rich_presence_conditional_display(Special_Pokemon_Caught_RP(), "Caught {0}!",
     rich_presence_lookup("Pokemon", Current_Pokemon(), PokemonLookup)
 )
 
@@ -946,19 +954,21 @@ rich_presence_conditional_display(Credits(), "Viewing Credits")
 rich_presence_conditional_display(DEMO_In_Menu(), "DEMO: In a menu")
 
 // Stage selection
-rich_presence_conditional_display(DEMO_Stage_Select(), "DEMO: Selecting a stage")
+rich_presence_conditional_display(DEMO_Stage_Select(), "DEMO: Selecting a stage | 🍓{0}/20",
+    rich_presence_value("Digit", DEMO_Berry_Count())
+)
 
 // Minidex viewing
 rich_presence_conditional_display(DEMO_Minidex(), "DEMO: Viewing the Minidex")
 
 // Caught a pokemon in a level
-rich_presence_conditional_display(DEMO_Pokemon_Caught_RP(), "DEMO: Caught a {0} in Demo {1}!",
+rich_presence_conditional_display(DEMO_Pokemon_Caught_RP(), "DEMO: Caught {0} in Demo {1}!",
     rich_presence_lookup("DemoPokemon", DEMO_Current_Pokemon(), DEMO_PokemonLookup),
     rich_presence_lookup("Stage", DEMO_Level(), StageLookup)
 )
 
 // Caught a special pokemon from the stage select screen
-rich_presence_conditional_display(DEMO_Special_Pokemon_Caught_RP(), "DEMO: Caught a {0}!",
+rich_presence_conditional_display(DEMO_Special_Pokemon_Caught_RP(), "DEMO: Caught {0}!",
     rich_presence_lookup("DemoPokemon", DEMO_Current_Pokemon(), DEMO_PokemonLookup)
 )
 
