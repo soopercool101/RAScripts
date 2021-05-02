@@ -299,6 +299,7 @@ function DEMO_Pokemon_Caught_RP() => State() == 0x5a && prior(State()) == 0x8 //
 function DEMO_Special_Pokemon_Caught_RP() => State() == 0x5a && (prior(State()) == 0xfa || prior(State()) == 0x38 || prior(State()) == 0x64) // Persistent, for rich presence
 function DEMO_Victory() => State() == 0x3 && prev(State()) == 0x8
 function DEMO_Victory_RP() => State() == 0x3
+function DEMO_Main_Menu() => State() == 0xea
 // Menu state, doesn't include Minidex or level select, which have their own handling
 function DEMO_In_Menu() => State() == 0xea || // Main Menu
                            State() == 0x07 || // How to Play
@@ -610,7 +611,8 @@ achievement(
 
 achievement(
     title = "Berry Master", description = "Collect all berries and catch Celebi", points = 25,
-    trigger = unless(PlayingDemo()) &&      // Don't track measured when in demo (the achievement is already impossible in demo, this just ensures measured bar doesn't show glitched values)
+    trigger = unless(Boot()) &&             // Don't track or reset progress during the boot sequence
+              unless(PlayingDemo()) &&      // Don't track measured when in demo (the achievement is already impossible in demo, this just ensures measured bar doesn't show glitched values)
               measured( // Measured bar for berry total (Each non-bonus level has 5 berries, for a total of 120)
                 Berry_Count() >= 120        // 120 total berries
               ) &&
@@ -628,7 +630,8 @@ achievement(
 
 achievement(
     title = "Gotta Catch 'em All Mini", description = "Complete the Minidex by catching Jirachi", points = 50,
-    trigger = unless(PlayingDemo()) &&      // Don't track measured when in demo (the achievement is already impossible in demo, this just ensures measured bar doesn't show glitched values)
+    trigger = unless(Boot()) &&             // Don't track or reset progress during the boot sequence
+              unless(PlayingDemo()) &&      // Don't track measured when in demo (the achievement is already impossible in demo, this just ensures measured bar doesn't show glitched values)
               measured(tally(34, // Measured because why not
                 once(bit0(0x4F2) == 1),     // 01 - Pichu
                 once(bit1(0x4F2) == 1),     // 02 - Snubull
