@@ -123,7 +123,7 @@ achievement(
 
 // Checks: Level = 1 (100m) and game state = 2 (level win)
 achievement(
-    title = "...Wait Is That It?", description = "Complete 100m", points = 10,
+    title = "...Wait Is That It?", description = "Complete 100m", points = 5,
     id = 114045, badge = "124571", published = "6/14/2020 11:54:33 PM", modified = "6/18/2020 8:30:18 PM",
     trigger = game_state() == 2 && level() == 1
 )
@@ -155,33 +155,33 @@ achievement(
 // 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
 // Same checks as "The Journey Begins" with the additional qualifier of lives = 2
 achievement(
-    title = "Barrel-ly a Hazard", description = "Complete 25m with 2 lives remaining", points = 10,
+    title = "Barrel-ly a Hazard", description = "Complete 25m with 2 lives remaining", points = 5,
     id = 114048, badge = "124575", published = "6/14/2020 11:54:49 PM", modified = "6/15/2020 2:47:31 AM",
-    trigger = game_state() == 2 && level() == 0 && full_lives()
+    trigger = trigger_when(game_state() == 2) && level() == 0 && full_lives() && game_state() > 1
 )
 
 // 2 lives was chosen as the hook for this as it is simple for players and this game doesn't give extra lives
 // Same checks as "...Wait Is That It?" with the additional qualifier of lives = 2
 achievement(
-    title = "The Perfect Run", description = "Complete 100m with 2 lives remaining", points = 25,
+    title = "The Perfect Run", description = "Complete 100m with 2 lives remaining", points = 10,
     id = 114049, badge = "124576", published = "6/14/2020 11:54:52 PM", modified = "6/15/2020 2:47:36 AM",
-    trigger = game_state() == 2 && level() == 1 && full_lives()
+    trigger = trigger_when(game_state() == 2) && level() == 1 && full_lives() && game_state() > 1
 )
 
 // Bonus of 4300 is highest I've obtained, but requires incredible RNG to pull off. 4200 was decided as a less frustrating goal.
 // Same checks as "The Journey Begins" with additional qualifier of the bonus being above 0x42 (Binary Coded Decimal)
 achievement(
-    title = "Barrel Blast", description = "Complete 25m with a bonus of 4200 or higher", points = 25,
+    title = "Barrel Blast", description = "Complete 25m with a bonus of 4200 or higher", points = 10,
     id = 114050, badge = "124579", published = "6/14/2020 11:54:58 PM", modified = "6/15/2020 2:47:41 AM",
-    trigger = game_state() == 2 && level() == 0 && bonus() >= 0x42
+    trigger = trigger_when(game_state() == 2) && level() == 0 && bonus() >= 0x42 && game_state() > 1
 )
 
 // Bonus of 4000 is highest I've obtained. Requires a fair amount of RNG but is fair enough as a hard achievement.
 // Same checks as "...Wait Is That It?" with additional qualifier of the bonus being above 0x40 (Binary Coded Decimal)
 achievement(
-    title = "Demolitions Expert", description = "Complete 100m with a bonus of 4000 or higher", points = 50,
+    title = "Demolitions Expert", description = "Complete 100m with a bonus of 4000 or higher", points = 10,
     id = 114051, badge = "124577", published = "6/14/2020 11:55:03 PM", modified = "6/15/2020 2:47:45 AM",
-    trigger = game_state() == 2 && level() == 1 && bonus() >= 0x40
+    trigger = trigger_when(game_state() == 2) && level() == 1 && bonus() >= 0x40 && game_state() > 1
 )
 
 // This achievement is a reference to the point total that gives an extra life in the original arcade version of the game.
@@ -195,7 +195,7 @@ achievement(
 
 // Checks if the level = 0 (25m) and the player X and Y positions are at least at the position indicated
 achievement(
-    title = "It's Really Just Decorative", description = "Reach the ladder under Donkey Kong in 25m", points = 3,
+    title = "It's Really Just Decorative", description = "Reach the ladder under Donkey Kong in 25m", points = 5,
     id = 114053, badge = "124584", published = "6/15/2020 3:59:02 AM", modified = "6/15/2020 3:59:02 AM",
     trigger = game_state() == 0xFF && level() == 0 && player_xpos() <= 36 && player_ypos() <= 21
 )

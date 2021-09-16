@@ -129,7 +129,7 @@ achievement(
 
 achievement(
     title = "Ghost-Free Diet", description = "In Arcade Mode and a single life, eat every normal pellet on the first maze before eating any Power Pellets", points = 10,
-    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x96 && arcade_mode() && never(has_power_pellet() || demo_mode() || lives() != prev(lives()) || maze() != 0)
+    trigger = trigger_when(pellets_eaten() == 0x96) && once(pellets_eaten() == 0) && arcade_mode() && never(has_power_pellet() || demo_mode() || lives() < prev(lives()) || maze() != 0)
 )
 
 achievement(
@@ -139,7 +139,7 @@ achievement(
 
 achievement(
     title = "Afraid of No Ghost", description = "In Arcade Mode and a single life, eat every normal pellet on the second maze before eating any Power Pellets", points = 25,
-    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x92 && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 1)
+    trigger = trigger_when(pellets_eaten() == 0x92) && once(pellets_eaten() == 0) && arcade_mode() && never(has_power_pellet() || lives() < prev(lives()) || maze() != 1)
 )
 
 achievement(
@@ -149,7 +149,7 @@ achievement(
 
 achievement(
     title = "Busting Makes Me Feel Bad", description = "In Arcade Mode and a single life, eat every normal pellet on the third maze before eating any Power Pellets", points = 50,
-    trigger = once(pellets_eaten() == 2) && pellets_eaten() == 0x9a && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 2)
+    trigger = trigger_when(pellets_eaten() == 0x9a) && once(pellets_eaten() == 2) && arcade_mode() && never(has_power_pellet() || lives() < prev(lives()) || maze() != 2)
 )
 
 achievement(
@@ -159,7 +159,7 @@ achievement(
 
 achievement(
     title = "Ghastly Pacifist", description = "In Arcade Mode and a single life, eat every normal pellet on the fourth maze before eating any Power Pellets", points = 50,
-    trigger = once(pellets_eaten() == 0) && pellets_eaten() == 0x96 && arcade_mode() && never(has_power_pellet() || lives() != prev(lives()) || maze() != 3)
+    trigger = trigger_when(pellets_eaten() == 0x96) && once(pellets_eaten() == 0) && arcade_mode() && never(has_power_pellet() || lives() < prev(lives()) || maze() != 3)
 )
 
 // Fruit despawn and eaten logic is too intertwined to do these achievements any other way as far as I can tell

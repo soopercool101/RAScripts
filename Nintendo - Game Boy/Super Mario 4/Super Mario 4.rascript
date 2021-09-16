@@ -168,7 +168,7 @@ PowerUpLookup = {
 }
 
 achievement(
-    title = "More Bang For Your Buck", description = "Exchange 30 coins for an extra life", points = 3,
+    title = "More Bang for Your Buck", description = "Exchange 30 coins for an extra life", points = 3,
     trigger = in_game() && coins() == 0 && prev(coins()) == 29 && lives() == (prev(lives()) + 1)
 )
 
